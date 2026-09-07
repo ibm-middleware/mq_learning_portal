@@ -1,48 +1,6 @@
-# Python virtual environments
 .venv/
 venv/
-env/
-ENV/
-env.bak/
-venv.bak/
-
-# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
-
-# Testing and coverage
-.pytest_cache/
-.coverage
-.coverage.*
-htmlcov/
-.tox/
-.nox/
-nosetests.xml
-coverage.xml
-
-# Distribution / packaging
-build/
-dist/
-*.egg-info/
-.eggs/
-
-# IDE and editor artifacts
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# Operating system files
-.DS_Store
-Thumbs.db
-
-# Environment variables and secrets
+*.pyc
 .env
-.env.*
-!.env.example
-
-# Logs and runtime data
-*.log
-*.pid
+.DS_Store
