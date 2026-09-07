@@ -1,0 +1,13 @@
+services:
+  portal:
+    build: .
+    image: mq-learning-portal:latest
+    container_name: mq-learning-portal
+    ports:
+      - "5080:5080"
+    environment:
+      - PORT=5080
+      - HOST=0.0.0.0
+      - PORTAL_ORG=Enterprise Messaging
+      - PORTAL_SITE_NAME=MQ Native HA Portal
+    restart: unless-stopped

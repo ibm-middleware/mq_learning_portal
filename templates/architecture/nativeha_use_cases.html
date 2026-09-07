@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block content %}
+{% set I = url_for('static', filename='icons/') %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/arch.css') }}">
+
+<div class="arch-top">
+  <div>
+    <p class="kicker">{{ page.kicker }}</p>
+    <h1>{{ page.title }}</h1>
+  </div>
+  <div class="arch-toolbar">
+    <div class="deck-bar" id="scenarioBtns"></div>
+    <button class="flow-btn" id="playAll" type="button">Play</button>
+    <button class="flow-btn ghost" id="prevScene" type="button">Prev</button>
+    <button class="flow-btn ghost" id="nextScene" type="button">Next</button>
+  </div>
+</div>
+
+<div class="arch-canvas" id="archCanvas">
+  <svg class="flow-overlay" id="flowOverlay"></svg>
+  <div class="arch-board">
+    <div class="north-bar">
+      <div class="ic card">
+        <i data-lucide="users"></i>
+        Client
+        <span class="sub">JMS / MQ</span>
+      </div>
+      <span class="chev"></span>
+      <div class="ic card" data-anchor="lb">
+        <i data-lucide="globe"></i>
+        External LB
+        <span class="sub">always to Live</span>
+      </div>
+    </div>
+
+    <section class="cluster live">
+      <div class="cluster-head">
+        <img class="vicon" src="{{ I }}vendors/openshift.svg" alt="">
+        OpenShift Cluster A
+        <span class="region-chip"><i data-lucide="map-pin"></i> Primary region</span>
+        <span class="cluster-meta is-live" id="roleLive">LIVE</span>
+      </div>
+      <div class="ns">
+        <div class="ns-label">Namespace · Native HA</div>
+        <div class="router-row">
+          <div class="ic card" data-anchor="live-router">
+            <img class="vicon" src="{{ I }}vendors/openshift.svg" alt="">
+            OCP Router
+            <span class="sub">SNI :443</span>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="pill" data-anchor="live-route"><img class="kicon" src="{{ I }}infrastructure/ingress.svg" alt=""> Route :443</div>
+          <span class="arrow-gap"></span>
+          <div class="pill svc" data-anchor="live-svc"><img class="kicon" src="{{ I }}infrastructure/service.svg" alt=""> Service :1414</div>
+          <span class="spacer"></span>
+          <div class="pill crrport" data-anchor="live-crr"><img class="kicon" src="{{ I }}infrastructure/ingress.svg" alt=""> Route CRR :443</div>
+        </div>
+        <div class="nha-box">
+          <div class="nha-box-title">Native HA Queue Manager · 3 pods</div>
+          <div class="az-row">
+            <div class="az" data-node="az-l0">
+              <div class="az-title"><img class="kicon sm" src="{{ I }}infrastructure/node.svg" alt=""> AZ 1 · worker</div>
+              <div class="pod active" data-node="l0" data-anchor="l0">
+                <img class="pod-i" src="{{ I }}infrastructure/pod.svg" alt="">
+                QM pod-0
+                <span class="role" data-role="l0">Active</span>
+              </div>
+              <div class="pvc"><img src="{{ I }}infrastructure/pvc.svg" alt="">PVC-0</div>
+            </div>
+            <div class="az" data-node="az-l1">
+              <div class="az-title"><img class="kicon sm" src="{{ I }}infrastructure/node.svg" alt=""> AZ 2 · worker</div>
+              <div class="pod replica" data-node="l1" data-anchor="l1">
+                <img class="pod-i" src="{{ I }}infrastructure/pod.svg" alt="">
+                QM pod-1
+                <span class="role" data-role="l1">Replica</span>
+              </div>
+              <div class="pvc"><img src="{{ I }}infrastructure/pvc.svg" alt="">PVC-1</div>
+            </div>
+            <div class="az" data-node="az-l2">
+              <div class="az-title"><img class="kicon sm" src="{{ I }}infrastructure/node.svg" alt=""> AZ 3 · worker</div>
+              <div class="pod replica" data-node="l2" data-anchor="l2">
+                <img class="pod-i" src="{{ I }}infrastructure/pod.svg" alt="">
+                QM pod-2
+                <span class="role" data-role="l2">Replica</span>
+              </div>
+              <div class="pvc"><img src="{{ I }}infrastructure/pvc.svg" alt="">PVC-2</div>
+            </div>
+          </div>
+        </div>
+        <div class="nha-metrics live" id="metricsLive">QUORUM 3/3 · INSYNC · BACKLOG 0 · GRPROLE Live</div>
+        <div class="plat-row">
+          <div class="ic sm" data-anchor="live-secret"><img class="kicon sm" src="{{ I }}infrastructure/secret.svg" alt="">Secret TLS</div>
+          <div class="ic sm"><img class="kicon sm" src="{{ I }}infrastructure/configmap.svg" alt="">ConfigMap MQSC</div>
+          <div class="ic sm"><img class="kicon sm" src="{{ I }}infrastructure/statefulset.svg" alt="">StatefulSet x3</div>
+          <div class="ic sm"><img class="kicon sm" src="{{ I }}infrastructure/crd.svg" alt="">QueueManager CR</div>
+          <div class="ic sm" data-anchor="live-metrics"><i data-lucide="bar-chart-3"></i>Metrics :9157</div>
+          <div class="ic sm smon"><i data-lucide="activity"></i>ServiceMonitor</div>
+          <div class="ic sm" data-anchor="live-op"><i data-lucide="cpu"></i>MQ Operator</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="crr-col">
+      <div class="crr-ports">443</div>
+      <div class="crr-badge"><i data-lucide="database"></i> CRR</div>
+      <div class="crr-ports">async TLS</div>
+    </div>
+
+    <section class="cluster rec">
+      <div class="cluster-head">
+        <img class="vicon" src="{{ I }}vendors/openshift.svg" alt="">
+        OpenShift Cluster B
+        <span class="region-chip"><i data-lucide="map-pin"></i> DR region</span>
+        <span class="cluster-meta is-recovery" id="roleRec">RECOVERY</span>
+      </div>
+      <div class="ns">
+        <div class="ns-label">Namespace · Native HA</div>
+        <div class="router-row">
+          <div class="ic card" data-anchor="rec-router">
+            <img class="vicon" src="{{ I }}vendors/openshift.svg" alt="">
+            OCP Router
+            <span class="sub">SNI :443</span>
+          </div>
+        </div>
+        <div class="flow-row">
+          <div class="pill crrport" data-anchor="rec-crr"><img class="kicon" src="{{ I }}infrastructure/ingress.svg" alt=""> Route CRR :443</div>
+          <span class="spacer"></span>
+          <div class="pill" data-anchor="rec-route"><img class="kicon" src="{{ I }}infrastructure/ingress.svg" alt=""> Route :443</div>
+          <span class="arrow-gap"></span>
+          <div class="pill svc" data-anchor="rec-svc"><img class="kicon" src="{{ I }}infrastructure/service.svg" alt=""> Service :1414</div>
+        </div>
+        <div class="nha-box">
+          <div class="nha-box-title">Native HA Queue Manager · 3 pods</div>
+          <div class="az-row">
+            <div class="az" data-node="az-r0">
+              <div class="az-title"><img class="kicon sm" src="{{ I }}infrastructure/node.svg" alt=""> AZ 1 · worker</div>
+              <div class="pod leader" data-node="r0" data-anchor="r0">
+                <img class="pod-i" src="{{ I }}infrastructure/pod.svg" alt="">
+                QM pod-0
+                <span class="role" data-role="r0">Leader</span>
+              </div>
+              <div class="pvc"><img src="{{ I }}infrastructure/pvc.svg" alt="">PVC-0</div>
+            </div>
+            <div class="az" data-node="az-r1">
+              <div class="az-title"><img class="kicon sm" src="{{ I }}infrastructure/node.svg" alt=""> AZ 2 · worker</div>
+              <div class="pod replica" data-node="r1" data-anchor="r1">
+                <img class="pod-i" src="{{ I }}infrastructure/pod.svg" alt="">
+                QM pod-1
+                <span class="role" data-role="r1">Follower</span>
+              </div>
+              <div class="pvc"><img src="{{ I }}infrastructure/pvc.svg" alt="">PVC-1</div>
+            </div>
+            <div class="az" data-node="az-r2">
+              <div class="az-title"><img class="kicon sm" src="{{ I }}infrastructure/node.svg" alt=""> AZ 3 · worker</div>
+              <div class="pod replica" data-node="r2" data-anchor="r2">
+                <img class="pod-i" src="{{ I }}infrastructure/pod.svg" alt="">
+                QM pod-2
+                <span class="role" data-role="r2">Follower</span>
+              </div>
+              <div class="pvc"><img src="{{ I }}infrastructure/pvc.svg" alt="">PVC-2</div>
+            </div>
+          </div>
+        </div>
+        <div class="nha-metrics recovery" id="metricsRec">QUORUM 3/3 · INSYNC · BACKLOG 0 · GRPROLE Recovery · RCOVLSN in-sync</div>
+        <div class="plat-row">
+          <div class="ic sm" data-anchor="rec-secret"><img class="kicon sm" src="{{ I }}infrastructure/secret.svg" alt="">Secret TLS</div>
+          <div class="ic sm"><img class="kicon sm" src="{{ I }}infrastructure/configmap.svg" alt="">ConfigMap MQSC</div>
+          <div class="ic sm"><img class="kicon sm" src="{{ I }}infrastructure/statefulset.svg" alt="">StatefulSet x3</div>
+          <div class="ic sm"><img class="kicon sm" src="{{ I }}infrastructure/crd.svg" alt="">QueueManager CR</div>
+          <div class="ic sm" data-anchor="rec-metrics"><i data-lucide="bar-chart-3"></i>Metrics :9157</div>
+          <div class="ic sm smon"><i data-lucide="activity"></i>ServiceMonitor</div>
+          <div class="ic sm" data-anchor="rec-op"><i data-lucide="cpu"></i>MQ Operator</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ext-row">
+      <aside class="ext-box vault-box" data-anchor="vault-box">
+        <div class="ic">
+          <span class="brand-disc vault"><img class="vicon" src="{{ I }}vendors/vault.svg" alt=""></span>
+          Vault
+          <span class="sub">Certificates · Keys · Secrets</span>
+        </div>
+      </aside>
+      <aside class="ext-box grafana-box" data-anchor="grafana-box">
+        <div class="ic">
+          <span class="brand-disc grafana"><img class="vicon" src="{{ I }}vendors/grafana.svg" alt=""></span>
+          Grafana
+          <span class="sub">Status · Alerts · Metrics :9157</span>
+        </div>
+      </aside>
+      <aside class="ext-box registry-box" data-anchor="registry-box">
+        <div class="ic">
+          <span class="brand-disc registry"><i data-lucide="package"></i></span>
+          Image Registry
+          <span class="sub">Operator / cp.icr.io</span>
+        </div>
+      </aside>
+    </div>
+
+    <div class="arch-legend">
+      <span class="lg client">Client → LB → Router :443 → Route :443 → Service :1414 → QMGR</span>
+      <span class="lg replica">Replica log sync :9414</span>
+      <span class="lg crr">CRR async TLS :443 → :9415</span>
+      <span class="lg vault">Vault → Secret</span>
+      <span class="lg grafana">Grafana ← Metrics :9157</span>
+      <span class="lg registry">Registry → Operator / image</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/usecases.js') }}"></script>
+{% endblock %}

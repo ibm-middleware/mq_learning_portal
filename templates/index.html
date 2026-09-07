@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, card %}
+{% block content %}
+<p class="crumb">Portal / Home</p>
+<section class="hero">
+  <div class="hero-row">
+    <div>
+      <p class="kicker">{{ site.kicker }}</p>
+      <h1>{{ home.title }}</h1>
+      <p class="lede">{{ home.lede }}</p>
+      <div class="related">
+        {% for link in home.link_items %}
+          <a href="{{ link.href }}">{{ link.label }}</a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="mini-flow" aria-hidden="true">
+      <div class="mini-node" style="left:22%;top:52%">
+        {{ icon("openshift") }}
+        {{ n.ocp_short }}
+      </div>
+      <div class="mini-node" style="left:72%;top:32%">
+        {{ icon("nativeha") }}
+        {{ n.nativeha_short }}
+      </div>
+      <span class="pulse"></span>
+    </div>
+  </div>
+</section>
+
+<div class="stat-row">
+  {% for stat in home.stats %}
+    <div class="stat"><b>{{ stat.value }}</b><span>{{ stat.label }}</span></div>
+  {% endfor %}
+</div>
+
+{% for group in home.groups %}
+<h2>{{ group.title }}</h2>
+{% if group.intro %}<p>{{ group.intro }}</p>{% endif %}
+<div class="grid {{ group.layout }}">
+  {% for item in group.pages %}
+    {{ card(item) }}
+  {% endfor %}
+</div>
+{% endfor %}
+{% endblock %}

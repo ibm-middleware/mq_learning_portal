@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+{% block content %}
+{% set I = url_for('static', filename='icons/') %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/arch.css') }}">
+
+<div class="arch-top">
+  <div>
+    <p class="kicker">{{ page.kicker }}</p>
+    <h1>{{ page.title }}</h1>
+  </div>
+  <div class="arch-toolbar">
+    <div class="deck-bar" id="intBtns"></div>
+    <button class="flow-btn" id="intPlay" type="button">Play</button>
+    <button class="flow-btn ghost" id="intPrev" type="button">Prev</button>
+    <button class="flow-btn ghost" id="intNext" type="button">Next</button>
+  </div>
+</div>
+
+<div class="arch-canvas algo-canvas" id="intCanvas">
+  <svg class="flow-overlay" id="intOverlay"></svg>
+  <div class="algo-board">
+    <div class="client-plane">
+      <span class="plane-tag">Application</span>
+      <article class="svc" data-anchor="app">
+        <div class="svc-ico"><img src="{{ I }}tabler/outline/messages.svg" alt=""></div>
+        <div class="svc-meta">
+          <code>amqsputc / JMS</code>
+          <strong>MQ client</strong>
+          <span>MQPUT persistent · MQCMIT UOW</span>
+        </div>
+      </article>
+      <article class="svc" data-anchor="lsnr">
+        <div class="svc-ico"><img src="{{ I }}tabler/outline/radio.svg" alt=""></div>
+        <div class="svc-meta">
+          <code>runmqlsr</code>
+          <strong>TCP listener</strong>
+          <span>accept SVRCONN · :1414</span>
+        </div>
+      </article>
+      <article class="svc" data-anchor="api">
+        <div class="svc-ico"><img src="{{ I }}tabler/outline/cpu.svg" alt=""></div>
+        <div class="svc-meta">
+          <code>amqrmppa</code>
+          <strong>Channel pool</strong>
+          <span>or amqcrsta responder · wait GRPLSN</span>
+        </div>
+      </article>
+      <article class="svc result" data-anchor="rc">
+        <div class="svc-ico"><img src="{{ I }}tabler/outline/circle-check.svg" alt=""></div>
+        <div class="svc-meta">
+          <code>MQCMIT</code>
+          <strong id="v-rc">RC pending</strong>
+          <span>sync HA only · not CRR</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="svc-mesh">
+      <section class="svc-group g-rep" data-replica="1">
+        <header class="svc-head">
+          <img src="{{ I }}kubernetes/resources/pod.svg" alt="">
+          <div>
+            <b>Live · Replica-1</b>
+            <span>Native HA follower</span>
+          </div>
+          <em class="role-pill replica">ROLE(Replica)</em>
+        </header>
+        <p class="proc-strip" title="Queue manager programs on this instance">
+          <code>amqzxma0</code><code>amqzmuc0</code><code>amqzmgr0</code><code>amqzfuma</code>
+        </p>
+        <dl class="svc-stats">
+          <div><dt>ACKLSN</dt><dd id="v-b">0:0:10:99</dd></div>
+          <div><dt>BACKLOG</dt><dd id="v-bl-b">0 KB</dd></div>
+          <div><dt>INSYNC</dt><dd id="v-sync-b">Yes</dd></div>
+        </dl>
+        <div class="svc-stack">
+          <article class="svc" data-anchor="b-rx">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/download.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>Native HA</code>
+              <strong>Recv sync log</strong>
+              <span>ReplicationAddress :9414</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="b-force">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/device-floppy.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqhasmx</code>
+              <strong>Log manager</strong>
+              <span>force own Snnnnnnn.LOG</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="b-ack">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/send.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>Native HA</code>
+              <strong>ACKLSN to leader</strong>
+              <span id="v-back-b">ACK 0:0:10:100</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="b-replay">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/refresh.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqzllp0</code>
+              <strong>Checkpoint / replay</strong>
+              <span>apply log → queues</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="b-qfile">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/folder.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>QMQMOBJCAT</code>
+              <strong>Queue files</strong>
+              <span>catalog + syncfiles</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="b-sync">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/checks.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>INSYNC</code>
+              <strong>Quorum vote</strong>
+              <span>can become Active</span>
+            </div>
+          </article>
+          <article class="svc hb" data-anchor="b-hb">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/activity-heartbeat.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqzxma0</code>
+              <strong>Heartbeat 5000 ms</strong>
+              <span>timeout = 2× interval</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="svc-group g-active">
+        <header class="svc-head">
+          <img src="{{ I }}vendors/ibm-mq.svg" alt="">
+          <div>
+            <b>Live · Active</b>
+            <span>GRPROLE(Live) · leader</span>
+          </div>
+          <em class="role-pill live">ROLE(Active)</em>
+        </header>
+        <p class="proc-strip" title="Control-plane programs started with the Active instance">
+          <code>amqzxma0</code><code>amqzmuc0</code><code>amqzmgr0</code><code>amqzmur0</code><code>amqzfuma</code>
+        </p>
+        <dl class="svc-stats">
+          <div><dt>nextlsn</dt><dd id="v-next">0:0:10:100</dd></div>
+          <div><dt>ACKLSN</dt><dd id="v-a">0:0:10:100</dd></div>
+          <div><dt>GRPLSN</dt><dd id="v-grp">0:0:10:99</dd></div>
+          <div><dt>QUORUM</dt><dd id="v-q">3/3</dd></div>
+        </dl>
+        <div class="svc-stack">
+          <article class="svc" data-anchor="txn">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/layers-intersect.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqzlaa0</code>
+              <strong>LQM agent</strong>
+              <span>or amqzlsa0 / amqzlwa0 · UOW</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="lsn">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/hash.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqhasmx</code>
+              <strong>Log manager</strong>
+              <span>amqharmx formats linear/replicated log</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="logrec">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/file-description.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>S0000001.LOG</code>
+              <strong>Force local extent</strong>
+              <span id="v-rec">type=PUT · 0:0:10:100</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="repl">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/network.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>Native HA</code>
+              <strong>Sync replicator</strong>
+              <span>intra-group :9414 · wait ACKLSN</span>
+            </div>
+          </article>
+          <article class="svc decision" data-anchor="gate">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/shield-check.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqzxma0</code>
+              <strong>Majority 2 of 3</strong>
+              <span>GRPLSN++ · then MQCMIT · RPO 0</span>
+            </div>
+          </article>
+          <article class="svc crr" data-anchor="crr">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/world.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>Native HA CRR</code>
+              <strong>Async group ship</strong>
+              <span>GroupLocalAddress :9415 · TLS required</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="ckpt">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/refresh-dot.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqzllp0</code>
+              <strong>Checkpoint</strong>
+              <span>media image · undo/redo UOW</span>
+            </div>
+          </article>
+          <article class="svc hb" data-anchor="a-hb">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/activity-heartbeat.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqzxma0</code>
+              <strong>Heartbeat 5000 ms</strong>
+              <span>timeout = 2× interval</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="svc-group g-rep" data-replica="2">
+        <header class="svc-head">
+          <img src="{{ I }}kubernetes/resources/pod.svg" alt="">
+          <div>
+            <b>Live · Replica-2</b>
+            <span>Native HA follower</span>
+          </div>
+          <em class="role-pill replica">ROLE(Replica)</em>
+        </header>
+        <p class="proc-strip">
+          <code>amqzxma0</code><code>amqzmuc0</code><code>amqzmgr0</code><code>amqzfuma</code>
+        </p>
+        <dl class="svc-stats">
+          <div><dt>ACKLSN</dt><dd id="v-c">0:0:10:99</dd></div>
+          <div><dt>BACKLOG</dt><dd id="v-bl-c">0 KB</dd></div>
+          <div><dt>INSYNC</dt><dd id="v-sync-c">Yes</dd></div>
+        </dl>
+        <div class="svc-stack">
+          <article class="svc" data-anchor="c-rx">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/download.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>Native HA</code>
+              <strong>Recv sync log</strong>
+              <span>ReplicationAddress :9414</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="c-force">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/device-floppy.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqhasmx</code>
+              <strong>Log manager</strong>
+              <span>force own Snnnnnnn.LOG</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="c-ack">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/send.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>Native HA</code>
+              <strong>ACKLSN to leader</strong>
+              <span id="v-back-c">ACK 0:0:10:100</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="c-replay">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/refresh.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqzllp0</code>
+              <strong>Checkpoint / replay</strong>
+              <span>apply log → queues</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="c-qfile">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/folder.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>QMQMOBJCAT</code>
+              <strong>Queue files</strong>
+              <span>catalog + syncfiles</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="c-sync">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/checks.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>INSYNC</code>
+              <strong>Quorum vote</strong>
+              <span>can become Active</span>
+            </div>
+          </article>
+          <article class="svc hb" data-anchor="c-hb">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/activity-heartbeat.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqzxma0</code>
+              <strong>Heartbeat 5000 ms</strong>
+              <span>timeout = 2× interval</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="svc-group g-crr">
+        <header class="svc-head">
+          <img src="{{ I }}kubernetes/resources/pod.svg" alt="">
+          <div>
+            <b>Recovery group</b>
+            <span>GRPROLE(Recovery) · async CRR</span>
+          </div>
+          <em class="role-pill recovery">ROLE(Leader)</em>
+        </header>
+        <p class="proc-strip">
+          <code>amqzxma0</code><code>amqzmuc0</code><code>amqzmgr0</code><code>amqzfuma</code>
+        </p>
+        <dl class="svc-stats crr-stats">
+          <div><dt>RCOVLSN</dt><dd id="v-rcov">0:0:10:99</dd></div>
+          <div><dt>BACKLOG</dt><dd id="v-rbl">0 KB</dd></div>
+          <div><dt>CONNGRP</dt><dd id="v-conngrp">Yes</dd></div>
+          <div><dt>GRSTATUS</dt><dd id="v-rstat">Normal</dd></div>
+        </dl>
+        <div class="svc-stack">
+          <article class="svc" data-anchor="rec-rx">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/cloud-network.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>Native HA CRR</code>
+              <strong>Recv async log</strong>
+              <span>GroupLocalAddress :9415 · TLS</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="rec-force">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/device-floppy.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>amqhasmx</code>
+              <strong>Log manager</strong>
+              <span>force recovery log · no app conns</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="rec-fan">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/share.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>Native HA</code>
+              <strong>Fan-out to replicas</strong>
+              <span>intra-recovery :9414 sync</span>
+            </div>
+          </article>
+          <div class="svc-pair">
+            <article class="svc" data-anchor="rec-r1">
+              <div class="svc-ico"><img src="{{ I }}kubernetes/resources/pod.svg" alt=""></div>
+              <div class="svc-meta">
+                <code>amqzllp0</code>
+                <strong>Rec replica-1</strong>
+                <span>replay locally</span>
+              </div>
+            </article>
+            <article class="svc" data-anchor="rec-r2">
+              <div class="svc-ico"><img src="{{ I }}kubernetes/resources/pod.svg" alt=""></div>
+              <div class="svc-meta">
+                <code>amqzllp0</code>
+                <strong>Rec replica-2</strong>
+                <span>replay locally</span>
+              </div>
+            </article>
+          </div>
+          <article class="svc" data-anchor="rec-rebase">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/refresh-dot.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>Native HA CRR</code>
+              <strong>Rebase</strong>
+              <span>full log rebuild if extents reused</span>
+            </div>
+          </article>
+          <article class="svc" data-anchor="rec-sync">
+            <div class="svc-ico"><img src="{{ I }}tabler/outline/checks.svg" alt=""></div>
+            <div class="svc-meta">
+              <code>RCOVLSN</code>
+              <strong id="v-rsync">In-sync with Live</strong>
+              <span>unplanned failover RPO ≥ 0</span>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <p class="int-note" id="intNote"></p>
+    <div class="arch-legend">
+      <span class="lg client">Sync HA · :9414 · MQCMIT</span>
+      <span class="lg replica">Replica ACKLSN</span>
+      <span class="lg crr">Async CRR · :9415</span>
+      <span class="lg vault">Replay / rebase</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/internals.js') }}"></script>
+{% endblock %}
+

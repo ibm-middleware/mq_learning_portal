@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="kicker">Not found</p>
+<h1>This page is not in the portal</h1>
+<p class="lede">This hub covers {{ n.mq }} on {{ n.ocp }}. Pick a linked page below.</p>
+<div class="related">
+  <a href="/">Portal home</a>
+  <a href="/architecture/nativeha_use_cases">{{ n.nativeha_short }} use cases</a>
+  <a href="/architecture/nativeha_internals">{{ n.nativeha_short }} internals</a>
+</div>
+{% endblock %}

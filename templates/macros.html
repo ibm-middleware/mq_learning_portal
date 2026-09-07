@@ -1,0 +1,46 @@
+{# Shared pieces. New pages only need page_header, related_links, and pager. #}
+
+{% macro icon(name) -%}
+<svg viewBox="0 0 48 48"><use href="#icon-{{ name }}"></use></svg>
+{%- endmacro %}
+
+{% macro page_header(page) %}
+<p class="crumb">{{ page.crumb | safe }}</p>
+{% if page.kicker %}<p class="kicker">{{ page.kicker }}</p>{% endif %}
+<h1>{{ page.title }}</h1>
+{% if page.lede %}<p class="lede">{{ page.lede }}</p>{% endif %}
+{% endmacro %}
+
+{% macro related_links(links) %}
+{% if links %}
+<div class="related">
+  {% for link in links %}
+    <a href="{{ link.href }}">{{ link.label }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro pager(page) %}
+<nav class="page-nav">
+  {% if page.prev %}
+    <a href="{{ page.prev.href }}"><small>Previous</small>{{ page.prev.label }}</a>
+  {% else %}
+    <span></span>
+  {% endif %}
+  {% if page.next %}
+    <a class="next" href="{{ page.next.href }}"><small>Next</small>{{ page.next.label }}</a>
+  {% endif %}
+</nav>
+{% endmacro %}
+
+{% macro card(page) %}
+<a class="card" href="{{ page.path }}">
+  {% if page.icon and page.icon != "all" %}
+    <div class="icon-wrap {{ page.icon }}">{{ icon(page.mark) }}</div>
+  {% endif %}
+  <h3>{{ page.nav }}</h3>
+  <p>{{ page.blurb }}</p>
+  <span class="more">{{ page.cta }}</span>
+</a>
+{% endmacro %}

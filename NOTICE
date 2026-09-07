@@ -1,0 +1,89 @@
+MQ Native HA Portal
+Copyright 2026 The MQ Native HA Portal contributors
+
+Licensed under the Apache License, Version 2.0.
+See the LICENSE file in this repository.
+
+This product is an educational visualization of publicly documented IBM MQ
+Native HA behavior on OpenShift / Kubernetes. It is not official IBM, Red Hat,
+Grafana Labs, or HashiCorp product documentation, and it does not grant any
+license to those products.
+
+-------------------------------------------------------------------------------
+Trademarks
+-------------------------------------------------------------------------------
+
+IBM, IBM MQ, and related marks are trademarks or registered trademarks of
+International Business Machines Corporation.
+
+Red Hat and OpenShift are trademarks or registered trademarks of Red Hat, Inc.
+or its affiliates.
+
+Grafana is a trademark of Grafana Labs.
+
+Vault and HashiCorp are trademarks of HashiCorp, Inc.
+
+Kubernetes is a registered trademark of The Linux Foundation.
+
+Product names, logos, and marks appear in this repository only to identify
+those products. No affiliation, sponsorship, or endorsement is implied.
+Do not use these marks as your own branding. Confirm supported product
+behavior in official vendor documentation.
+
+The IBM MQ mark under static/icons/vendors/ibm-mq.svg is an original diagram
+glyph created for this portal. It is not the official IBM eight-bar logo.
+
+-------------------------------------------------------------------------------
+No secrets, customer data, or environment-specific content
+-------------------------------------------------------------------------------
+
+This repository is intended to be cloned by any organization. It must not
+contain credentials, entitlement keys, private keys, customer names, internal
+hostnames, or environment-specific configuration. Brand the running instance
+with PORTAL_ORG / PORTAL_SITE_NAME or site.yaml; do not commit those values
+if they identify a private deployment.
+
+-------------------------------------------------------------------------------
+Third-party notices
+-------------------------------------------------------------------------------
+
+Tabler Icons (static/icons/tabler)
+  Copyright (c) 2020-2026 Paweł Kuna
+  License: MIT
+  See static/icons/tabler/LICENSE
+
+Kubernetes Icons (static/icons/kubernetes and static/icons/infrastructure)
+  Source: https://github.com/kubernetes/community/tree/master/icons
+  License: Apache-2.0 or CC BY 4.0
+  The Kubernetes logo is a trademark of The Linux Foundation.
+  See static/icons/kubernetes/LICENSE
+
+Lucide Icons (static/js/lucide.min.js)
+  lucide v0.468.0
+  License: ISC
+  Permission to use, copy, modify, and/or distribute this software for any
+  purpose with or without fee is hereby granted, provided that the above
+  copyright notice and this permission notice appear in all copies.
+  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Source Sans 3 (static/fonts/source-sans-3-latin-*.woff2)
+  Copyright 2010-2024 Adobe (http://www.adobe.com/), with Reserved Font Name
+  'Source'.
+  License: SIL Open Font License 1.1
+  See static/fonts/OFL.txt
+
+IBM Plex Mono (static/fonts/ibm-plex-mono-latin-*.woff2)
+  Copyright 2017 IBM Corp., with Reserved Font Name 'Plex'.
+  License: SIL Open Font License 1.1
+  See static/fonts/OFL.txt
+
+OpenShift, Grafana, and Vault SVG marks (static/icons/vendors)
+  SVG paths redistributed from Simple Icons (https://simpleicons.org),
+  dedicated to the public domain under CC0 1.0. Trademarks remain with
+  their owners and are used here only for product identification.

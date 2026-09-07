@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }} · {{ site.name }}</title>
+  <link rel="icon" href="{{ url_for('static', filename='icons/favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/portal.css') }}">
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <div class="overlay" id="overlay"></div>
+
+  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <symbol id="icon-mq" viewBox="0 0 48 48">
+      <rect x="4" y="8" width="40" height="10" rx="2" fill="#062D28"/>
+      <rect x="8" y="12" width="8" height="2" rx="1" fill="#E7F1EF"/>
+      <rect x="18" y="12" width="14" height="2" rx="1" fill="#7EB8AE"/>
+      <rect x="6" y="20" width="36" height="10" rx="2" fill="#0B433C"/>
+      <rect x="10" y="24" width="10" height="2" rx="1" fill="#E7F1EF"/>
+      <rect x="22" y="24" width="12" height="2" rx="1" fill="#7EB8AE"/>
+      <rect x="8" y="32" width="32" height="10" rx="2" fill="#041F1C"/>
+      <rect x="12" y="36" width="8" height="2" rx="1" fill="#7EB8AE"/>
+      <rect x="22" y="36" width="10" height="2" rx="1" fill="#C4A078"/>
+    </symbol>
+    <symbol id="icon-nativeha" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20" fill="none" stroke="#7EB8AE" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <circle cx="24" cy="11" r="7" fill="#062D28"/>
+      <rect x="21" y="8.5" width="6" height="1.4" rx="0.7" fill="#d0e2ff"/>
+      <rect x="21" y="11.1" width="6" height="1.4" rx="0.7" fill="#a6c8ff"/>
+      <rect x="21" y="13.7" width="6" height="1.4" rx="0.7" fill="#78a9ff"/>
+      <circle cx="11" cy="33" r="7" fill="#1A6B61"/>
+      <rect x="8" y="30.5" width="6" height="1.4" rx="0.7" fill="#d0e2ff"/>
+      <rect x="8" y="33.1" width="6" height="1.4" rx="0.7" fill="#a6c8ff"/>
+      <rect x="8" y="35.7" width="6" height="1.4" rx="0.7" fill="#78a9ff"/>
+      <circle cx="37" cy="33" r="7" fill="#1A6B61"/>
+      <rect x="34" y="30.5" width="6" height="1.4" rx="0.7" fill="#d0e2ff"/>
+      <rect x="34" y="33.1" width="6" height="1.4" rx="0.7" fill="#a6c8ff"/>
+      <rect x="34" y="35.7" width="6" height="1.4" rx="0.7" fill="#78a9ff"/>
+      <path d="M20 16 L14 27" stroke="#7EB8AE" stroke-width="1.6" fill="none"/>
+      <path d="M28 16 L34 27" stroke="#7EB8AE" stroke-width="1.6" fill="none"/>
+      <path d="M18 33 H30" stroke="#7EB8AE" stroke-width="1.6" fill="none"/>
+    </symbol>
+    <symbol id="icon-openshift" viewBox="0 0 48 48">
+      <path d="M24 4 L42 14 V34 L24 44 L6 34 V14 Z" fill="none" stroke="#803A20" stroke-width="2"/>
+      <circle cx="24" cy="16" r="4.2" fill="#803A20"/>
+      <circle cx="15" cy="30" r="4.2" fill="#6A2F1A"/>
+      <circle cx="33" cy="30" r="4.2" fill="#6A2F1A"/>
+      <path d="M24 20 L15 26.5 L33 26.5 Z" fill="none" stroke="#C4A078" stroke-width="1.5"/>
+    </symbol>
+  </svg>
+
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="/">
+      <div class="brand-mark">
+        <svg viewBox="0 0 48 48"><use href="#icon-nativeha"></use></svg>
+      </div>
+      <div class="brand-text">
+        <strong>{{ site.name }}</strong>
+        <span>{{ site.tagline }}</span>
+      </div>
+    </a>
+    <nav class="nav" aria-label="Portal">
+      {% for item in nav %}
+        {% if item.children %}
+          <details {% if section == item.id %}open{% endif %}>
+            <summary class="nav-link">
+              <i data-lucide="{{ item.icon }}" width="16" height="16"></i>
+              {{ item.label }}
+            </summary>
+            {% for child in item.children %}
+              <a class="child {% if current_path == child.href %}active{% endif %}" href="{{ child.href }}">
+                <span class="product-dot {{ child.product }}"></span>
+                {{ child.label }}
+              </a>
+            {% endfor %}
+          </details>
+        {% else %}
+          <a class="nav-link {% if current_path == item.href %}active{% endif %}" href="{{ item.href }}">
+            <i data-lucide="{{ item.icon }}" width="16" height="16"></i>
+            {{ item.label }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    <div class="sidebar-foot">
+      {{ site.footer_nav }}<br>
+      {{ site.footer_legal }}
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Open navigation">
+        <i data-lucide="menu" width="20" height="20"></i>
+      </button>
+      <div class="search-wrap">
+        <i data-lucide="search" class="search-icon" width="18" height="18"></i>
+        <input id="search" type="search" placeholder="{{ site.search_placeholder }}" autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <div class="top-chips">
+        {% for chip in chips %}
+        <span class="chip {{ chip.id }}"><svg viewBox="0 0 48 48"><use href="#icon-{{ chip.icon }}"></use></svg> {{ chip.name }}</span>
+        {% endfor %}
+      </div>
+    </header>
+
+    <main class="content{% if page.path and page.path.startswith('/architecture/nativeha') %} page-arch{% endif %}" id="content">
+      {% block content %}{% endblock %}
+      <p class="footer-note">{{ site.footer_note }}</p>
+    </main>
+  </div>
+
+  <script id="search-index-data" type="application/json">{{ search_index | tojson | safe }}</script>
+  <script>
+    window.SEARCH_INDEX = JSON.parse(document.getElementById("search-index-data").textContent || "[]");
+  </script>
+  <script src="{{ url_for('static', filename='js/lucide.min.js') }}"></script>
+  <script>window.lucide && lucide.createIcons();</script>
+  <script src="{{ url_for('static', filename='js/portal.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

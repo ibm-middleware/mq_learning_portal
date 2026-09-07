@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Original portal mark for IBM MQ. Not an official IBM logo. -->
+  <rect x="4" y="8" width="40" height="10" rx="2" fill="#062D28"/>
+  <rect x="8" y="12" width="8" height="2" rx="1" fill="#E7F1EF"/>
+  <rect x="18" y="12" width="14" height="2" rx="1" fill="#7EB8AE"/>
+  <rect x="6" y="20" width="36" height="10" rx="2" fill="#0B433C"/>
+  <rect x="10" y="24" width="10" height="2" rx="1" fill="#E7F1EF"/>
+  <rect x="22" y="24" width="12" height="2" rx="1" fill="#7EB8AE"/>
+  <rect x="8" y="32" width="32" height="10" rx="2" fill="#041F1C"/>
+  <rect x="12" y="36" width="8" height="2" rx="1" fill="#7EB8AE"/>
+  <rect x="22" y="36" width="10" height="2" rx="1" fill="#C4A078"/>
+</svg>

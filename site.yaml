@@ -1,0 +1,113 @@
+# =============================================================================
+# Enterprise MQ Learning & Operations Portal
+# Customization: Edit THIS file (site.yaml) or set environment variables to
+# rebrand and tailor this portal for your organization.
+#
+# Default Theme Palette:
+#   Forest / Tiber  #062D28 (Primary / IBM MQ)
+#   Terracotta      #803A20 (Accent / OpenShift)
+#   White           #FFFFFF (Surface / Background)
+#
+# Scope: IBM MQ Native HA on OpenShift / Kubernetes.
+#
+# Tokens: {site} {org} {mq} {mq_short} {ocp} {ocp_short} {nativeha} {nativeha_short}
+# You can also override site.name and site.org via environment variables:
+#   PORTAL_SITE_NAME, PORTAL_ORG, and SITE_CONFIG
+# =============================================================================
+
+site:
+  name: MQ Native HA Portal
+  org: Enterprise Messaging
+  tagline: "{mq} on {ocp}"
+  kicker: Architecture
+  search_placeholder: Search Native HA use cases
+  footer_nav: Learning portal for {org}.
+  footer_legal: IBM, IBM MQ, OpenShift, Grafana, Vault, and Kubernetes are trademarks of their respective owners. This portal is not official product documentation.
+  footer_note: Diagrams describe {nativeha} on {ocp} — a three-instance quorum with a replicated log, reconciled by the IBM MQ Operator. Behavior shown is educational; confirm against official vendor documentation.
+
+products:
+  mq:
+    name: IBM MQ Native HA
+    short: Native HA
+    color: "#062D28"
+    icon: mq
+    chip: true
+  nativeha:
+    name: Native HA
+    short: Native HA
+    color: "#1A6B61"
+    icon: nativeha
+  ocp:
+    name: OpenShift
+    short: OpenShift
+    color: "#803A20"
+    icon: openshift
+    chip: true
+
+sections:
+  - id: home
+    label: Portal home
+    icon: home
+  - id: architecture
+    label: Architecture
+    icon: share-2
+
+home:
+  title: See how {mq} runs on {ocp}
+  lede: >
+    Native HA use cases for a three-instance queue manager on OpenShift,
+    including failover and region switch.
+  links:
+    - /architecture/nativeha_use_cases
+    - /architecture/nativeha_internals
+  stats:
+    - value: 3 pods
+      label: "{nativeha} quorum group"
+    - value: 1 active
+      label: Accepts MQ client work
+    - value: 2 replicas
+      label: In-sync log copies
+    - value: 1 operator
+      label: IBM MQ Operator on {ocp}
+  groups:
+    - title: Architecture
+      intro: ""
+      layout: grid-3
+
+pages:
+  - path: /
+    template: index.html
+    section: home
+    title: "{site}"
+    nav: Portal home
+    blurb: Hub for {mq} on {ocp}.
+
+  - path: /architecture/nativeha_use_cases
+    template: architecture/nativeha_use_cases.html
+    section: architecture
+    product: nativeha
+    title: "{nativeha} use cases"
+    nav: "{nativeha} use cases"
+    kicker: "Presentation · {mq_short} on {ocp}"
+    lede: ""
+    blurb: Native HA visualization with failover and region-switch scenarios.
+    tags: nativeha live recovery failover switchover rpo openshift
+    cta: Open presentation →
+    home_group: Architecture
+    related:
+      - /architecture/nativeha_internals
+
+  - path: /architecture/nativeha_internals
+    template: architecture/nativeha_internals.html
+    section: architecture
+    product: nativeha
+    title: "{nativeha} internals"
+    nav: "{nativeha} internals"
+    kicker: "Presentation · {mq_short} pods"
+    lede: ""
+    blurb: Low-level Native HA pod internals — replicated log, quorum, heartbeat, election, catch-up.
+    tags: nativeha raft quorum log replica election heartbeat catch-up 9414
+    cta: Open internals →
+    home_group: Architecture
+    related:
+      - /architecture/nativeha_use_cases
