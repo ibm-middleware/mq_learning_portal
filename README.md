@@ -29,8 +29,8 @@ This is **educational visualization**, not official IBM or Red Hat product docum
 Requires Python 3.9 or later.
 
 ```bash
-git clone git@github.com:ibm-middleware/mq_learning_porta.git
-cd mq_learning_porta
+git clone git@github.com:ibm-middleware/mq_learning_portal.git
+cd mq_learning_portal
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
